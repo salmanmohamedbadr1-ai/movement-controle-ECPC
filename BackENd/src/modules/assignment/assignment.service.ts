@@ -6,6 +6,7 @@ import { RequestStatus } from '../../common/enums/request-status.enum';
 import { UserRole } from '../../common/enums/user-role.enum';
 import { VolunteerStatus } from '../../common/enums/volunteer-status.enum';
 import { AuthenticatedUser } from '../../common/interfaces/authenticated-user.interface';
+import { getHallGroup, isSameHallGroup } from '../../common/utils/hall-group.util';
 import { hallToNumber } from '../../common/utils/hall.util';
 import { NotificationsService } from '../notifications/notifications.service';
 import { RequestResponseDto } from '../requests/dto/request-response.dto';
@@ -201,7 +202,7 @@ export class AssignmentService {
       where: {
         role: UserRole.VOLUNTEER,
         status: VolunteerStatus.AVAILABLE,
-        hall: hallToNumber[request.hall],
+        hall: In(getHallGroup(hallToNumber[request.hall])),
         gender: request.gender,
       },
     });
@@ -229,7 +230,10 @@ export class AssignmentService {
         continue;
       }
 
-      const sameHall = active.filter((r) => r.hall === request.hall);
+      const requestHallNumber = hallToNumber[request.hall];
+      const sameHall = active.filter((r) =>
+        isSameHallGroup(hallToNumber[r.hall], requestHallNumber),
+      );
       const hallMatch = sameHall.length > 0;
       const distance = hallMatch
         ? Math.min(
