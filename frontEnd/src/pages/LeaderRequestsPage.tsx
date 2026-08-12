@@ -10,8 +10,9 @@ import { useRequestsStore } from '../stores/requests.store';
 import type { RequestBucket } from '../stores/requests.store';
 import { useUsersStore } from '../stores/users.store';
 import * as assignmentApi from '../api/assignment.api';
-import { Hall, RequestStatus, UserRole } from '../types/enums';
-import { formatHall } from '../utils/formatters';
+import type { Hall } from '../types/enums';
+import { RequestStatus, UserRole } from '../types/enums';
+import { getHallGroup, HALL_GROUP_OPTIONS } from '../utils/formatters';
 import { cn } from '../utils/cn';
 
 const TABS: { key: RequestBucket; label: string }[] = [
@@ -56,7 +57,9 @@ export function LeaderRequestsPage() {
 
   const items = useMemo(() => {
     return bucketItems.filter((request) => {
-      if (hallFilter !== HALL_FILTER_ALL && request.hall !== hallFilter) return false;
+      if (hallFilter !== HALL_FILTER_ALL && !getHallGroup(hallFilter as Hall).includes(request.hall)) {
+        return false;
+      }
       if (volunteerFilter === VOLUNTEER_FILTER_UNASSIGNED && request.volunteer) return false;
       if (
         volunteerFilter !== VOLUNTEER_FILTER_ALL &&
@@ -134,9 +137,9 @@ export function LeaderRequestsPage() {
               onChange={(e) => setHallFilter(e.target.value)}
             >
               <option value={HALL_FILTER_ALL}>All</option>
-              {Object.values(Hall).map((h) => (
-                <option key={h} value={h}>
-                  {formatHall(h)}
+              {HALL_GROUP_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
                 </option>
               ))}
             </Select>

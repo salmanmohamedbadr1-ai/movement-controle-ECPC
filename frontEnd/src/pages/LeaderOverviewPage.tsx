@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { Card } from '../components/ui/Card';
 import { Spinner } from '../components/ui/Spinner';
 import { useDashboardStore } from '../stores/dashboard.store';
-import { formatHall } from '../utils/formatters';
+import { formatHall, getHallGroup } from '../utils/formatters';
+import type { Hall } from '../types/enums';
 
 function StatCard({ label, value, color }: { label: string; value: number; color: string }) {
   return (
@@ -31,10 +32,21 @@ export function LeaderOverviewPage() {
   }
   if (!overview) return null;
 
-  const maxHallCount = Math.max(
-    1,
-    ...overview.perHall.map((h) => h.waitingCount + h.activeCount),
-  );
+  const groupedPerHall = overview.perHall.reduce<
+    { hall: Hall; waitingCount: number; activeCount: number }[]
+  >((groups, h) => {
+    const representative = getHallGroup(h.hall)[0];
+    const existing = groups.find((g) => g.hall === representative);
+    if (existing) {
+      existing.waitingCount += h.waitingCount;
+      existing.activeCount += h.activeCount;
+    } else {
+      groups.push({ hall: representative, waitingCount: h.waitingCount, activeCount: h.activeCount });
+    }
+    return groups;
+  }, []);
+
+  const maxHallCount = Math.max(1, ...groupedPerHall.map((h) => h.waitingCount + h.activeCount));
 
   return (
     <div className="space-y-8">
@@ -63,7 +75,7 @@ export function LeaderOverviewPage() {
       <div>
         <h1 className="mb-4 text-xl font-bold text-slate-900">Load by Hall</h1>
         <Card className="space-y-4">
-          {overview.perHall.map((h) => (
+          {groupedPerHall.map((h) => (
             <div key={h.hall}>
               <div className="mb-1 flex items-center justify-between text-sm">
                 <span className="font-medium text-slate-700">{formatHall(h.hall)}</span>

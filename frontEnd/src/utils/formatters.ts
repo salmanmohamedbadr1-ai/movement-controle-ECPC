@@ -6,9 +6,38 @@ export function timeAgo(iso: string): string {
   return formatDistanceToNow(new Date(iso), { addSuffix: true });
 }
 
-export function formatHall(hall: Hall): string {
-  return hall.replace('HALL_', 'Hall ');
+const HALL_GROUPS: Hall[][] = [[Hall.HALL_1, Hall.HALL_2], [Hall.HALL_3], [Hall.HALL_4]];
+
+export function getHallGroup(hall: Hall): Hall[] {
+  return HALL_GROUPS.find((g) => g.includes(hall)) ?? [hall];
 }
+
+export function formatHall(hall: Hall): string {
+  return `Hall ${getHallGroup(hall)
+    .map((h) => h.replace('HALL_', ''))
+    .join(' & ')}`;
+}
+
+export const HALL_GROUP_OPTIONS: { value: Hall; label: string }[] = HALL_GROUPS.map((group) => ({
+  value: group[0],
+  label: formatHall(group[0]),
+}));
+
+const HALL_NUMBER_GROUPS: number[][] = [[1, 2], [3], [4]];
+
+export function getHallNumberGroup(n: number): number[] {
+  return HALL_NUMBER_GROUPS.find((g) => g.includes(n)) ?? [n];
+}
+
+export function formatHallNumber(n: number): string {
+  return `Hall ${getHallNumberGroup(n).join(' & ')}`;
+}
+
+export const HALL_NUMBER_GROUP_OPTIONS: { value: number; label: string }[] =
+  HALL_NUMBER_GROUPS.map((group) => ({
+    value: group[0],
+    label: formatHallNumber(group[0]),
+  }));
 
 export function formatRequestType(type: RequestType): string {
   return type

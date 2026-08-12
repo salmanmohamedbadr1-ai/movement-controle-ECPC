@@ -7,7 +7,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomInt } from 'crypto';
 import PDFDocument from 'pdfkit';
-import { QueryFailedError, Repository } from 'typeorm';
+import { In, QueryFailedError, Repository } from 'typeorm';
+import { formatHallGroupLabel, getHallGroup } from '../../common/utils/hall-group.util';
 import { Gender } from '../../common/enums/gender.enum';
 import { UserRole } from '../../common/enums/user-role.enum';
 import { VolunteerStatus } from '../../common/enums/volunteer-status.enum';
@@ -133,7 +134,7 @@ export class UsersService {
 
   async exportHallPdf(hall: number): Promise<Buffer> {
     const users = await this.usersRepository.find({
-      where: { hall },
+      where: { hall: In(getHallGroup(hall)) },
       order: { name: 'ASC' },
     });
 
@@ -141,7 +142,7 @@ export class UsersService {
     const chunks: Buffer[] = [];
     doc.on('data', (chunk: Buffer) => chunks.push(chunk));
 
-    doc.fontSize(18).text(`Hall ${hall} — Volunteer Codes`, { align: 'center' });
+    doc.fontSize(18).text(`${formatHallGroupLabel(hall)} — Volunteer Codes`, { align: 'center' });
     doc.moveDown(1.5);
 
     for (const user of users) {

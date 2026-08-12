@@ -5,9 +5,7 @@ import { Select } from '../ui/Select';
 import { Button } from '../ui/Button';
 import type { UserDto } from '../../types/models';
 import { UserRole, VolunteerStatus } from '../../types/enums';
-import { timeAgo } from '../../utils/formatters';
-
-const HALL_NUMBERS = [1, 2, 3, 4];
+import { getHallNumberGroup, HALL_NUMBER_GROUP_OPTIONS, timeAgo } from '../../utils/formatters';
 
 interface UsersTableProps {
   users: UserDto[];
@@ -54,13 +52,13 @@ export function UsersTable({
               <td className="px-4 py-3">
                 <Select
                   className="w-auto py-1 text-xs"
-                  value={u.hall ?? ''}
+                  value={u.hall == null ? '' : getHallNumberGroup(u.hall)[0]}
                   onChange={(e) => onHallChange(u.id, Number(e.target.value))}
                 >
                   {u.hall == null && <option value="">—</option>}
-                  {HALL_NUMBERS.map((h) => (
-                    <option key={h} value={h}>
-                      Hall {h}
+                  {HALL_NUMBER_GROUP_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
                     </option>
                   ))}
                 </Select>

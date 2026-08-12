@@ -94,7 +94,7 @@ export function HomePage() {
           <p className="mt-1 text-xs text-slate-500">
             {derivedHall
               ? `→ ${formatHall(derivedHall)}`
-              : 'Team number should start with your hall number (1-4), e.g. 2015 for Hall 2.'}
+              : 'Team number should start with your hall number (1-4), e.g. 2015 for Hall 1 & 2.'}
           </p>
         </div>
 

@@ -11,3 +11,7 @@ export function getHallGroup(hallNumber: number): number[] {
 export function isSameHallGroup(a: number, b: number): boolean {
   return getHallGroup(a).includes(b);
 }
+
+export function formatHallGroupLabel(hallNumber: number): string {
+  return `Hall ${getHallGroup(hallNumber).join(' & ')}`;
+}

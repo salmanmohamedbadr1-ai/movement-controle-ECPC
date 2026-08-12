@@ -7,8 +7,7 @@ import { Select } from '../ui/Select';
 import { Button } from '../ui/Button';
 import { useUsersStore } from '../../stores/users.store';
 import { Gender, UserRole } from '../../types/enums';
-
-const HALL_NUMBERS = [1, 2, 3, 4];
+import { HALL_NUMBER_GROUP_OPTIONS } from '../../utils/formatters';
 
 interface NameRow {
   name: string;
@@ -66,9 +65,9 @@ export function BulkCreateUsersModal({ open, onClose }: { open: boolean; onClose
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-700">Hall</label>
             <Select value={hall} onChange={(e) => setHall(Number(e.target.value))}>
-              {HALL_NUMBERS.map((h) => (
-                <option key={h} value={h}>
-                  Hall {h}
+              {HALL_NUMBER_GROUP_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
                 </option>
               ))}
             </Select>

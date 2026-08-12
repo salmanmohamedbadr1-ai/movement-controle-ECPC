@@ -13,8 +13,8 @@ import { useUsersStore } from '../stores/users.store';
 import { exportHallPdf } from '../api/users.api';
 import { UserRole } from '../types/enums';
 import type { VolunteerStatus } from '../types/enums';
+import { getHallNumberGroup, HALL_NUMBER_GROUP_OPTIONS } from '../utils/formatters';
 
-const HALL_NUMBERS = [1, 2, 3, 4];
 const HALL_FILTER_ALL = 'ALL';
 const ROLE_FILTER_ALL = 'ALL';
 
@@ -47,7 +47,9 @@ export function LeaderUsersPage() {
         return false;
       }
       if (roleFilter !== ROLE_FILTER_ALL && u.role !== roleFilter) return false;
-      if (hallFilter !== HALL_FILTER_ALL && String(u.hall ?? '') !== hallFilter) return false;
+      if (hallFilter !== HALL_FILTER_ALL && !getHallNumberGroup(Number(hallFilter)).includes(u.hall ?? -1)) {
+        return false;
+      }
       return true;
     });
   }, [users, search, roleFilter, hallFilter]);
@@ -140,9 +142,9 @@ export function LeaderUsersPage() {
               onChange={(e) => setHallFilter(e.target.value)}
             >
               <option value={HALL_FILTER_ALL}>All</option>
-              {HALL_NUMBERS.map((h) => (
-                <option key={h} value={h}>
-                  Hall {h}
+              {HALL_NUMBER_GROUP_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
                 </option>
               ))}
             </Select>
@@ -159,9 +161,9 @@ export function LeaderUsersPage() {
             value={exportHall}
             onChange={(e) => setExportHall(Number(e.target.value))}
           >
-            {HALL_NUMBERS.map((h) => (
-              <option key={h} value={h}>
-                Hall {h}
+            {HALL_NUMBER_GROUP_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
               </option>
             ))}
           </Select>
