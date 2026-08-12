@@ -1,0 +1,113 @@
+Enum UserRole {
+  LEADER
+  VOLUNTEER
+}
+
+Enum VolunteerStatus {
+  AVAILABLE
+  BUSY
+  OFFLINE
+}
+
+Enum Hall {
+  HALL_1
+  HALL_2
+  HALL_3
+  HALL_4
+}
+
+Enum RequestType {
+  BATHROOM
+  PRAYER
+  BREAK_TIME
+}
+
+Enum RequestStatus {
+  WAITING
+  ASSIGNED
+  PICKED_UP
+  COMPLETED
+  CANCELLED
+}
+
+Table users {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
+
+
+  role UserRole
+  status VolunteerStatus
+  hall int [null]
+
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table volunteer_sessions {
+  id uuid [pk]
+
+  user_id uuid
+  device_name varchar [null]
+  device_id varchar [null]
+
+  is_online boolean
+  socket_id varchar [null]
+
+  login_at timestamp
+  last_seen_at timestamp
+  logout_at timestamp [null]
+
+  created_at timestamp
+}
+
+Table teams {
+  id uuid [pk]
+
+  hall Hall
+  team_number int
+
+  created_at timestamp
+
+  Indexes {
+    (hall, team_number) [unique]
+  }
+}
+
+Table requests {
+  id uuid [pk]
+
+  team_id uuid
+  volunteer_id uuid [null]
+
+  request_type RequestType
+  status RequestStatus
+
+  priority int [default: 0]
+
+  assigned_at timestamp [null]
+  picked_up_at timestamp [null]
+  completed_at timestamp [null]
+
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table request_history {
+  id uuid [pk]
+
+  request_id uuid
+  changed_by uuid
+
+  status RequestStatus
+
+  created_at timestamp
+}
+
+Ref: volunteer_sessions.user_id > users.id
+
+Ref: requests.team_id > teams.id
+Ref: requests.volunteer_id > users.id
+
+Ref: request_history.request_id > requests.id
+Ref: request_history.changed_by > users.id

@@ -1,0 +1,7 @@
+export enum RequestStatus {
+  WAITING = 'WAITING',
+  ASSIGNED = 'ASSIGNED',
+  PICKED_UP = 'PICKED_UP',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+}
