@@ -31,8 +31,12 @@ export function LeaderRequestsPage() {
   const [hallFilter, setHallFilter] = useState<string>(HALL_FILTER_ALL);
   const [volunteerFilter, setVolunteerFilter] = useState<string>(VOLUNTEER_FILTER_ALL);
   const store = useRequestsStore();
-  const volunteers = useUsersStore((s) => s.users.filter((u) => u.role === UserRole.VOLUNTEER));
+  const users = useUsersStore((s) => s.users);
   const fetchUsers = useUsersStore((s) => s.fetch);
+  const volunteers = useMemo(
+    () => users.filter((u) => u.role === UserRole.VOLUNTEER),
+    [users],
+  );
 
   useEffect(() => {
     store.setActiveView(tab);
