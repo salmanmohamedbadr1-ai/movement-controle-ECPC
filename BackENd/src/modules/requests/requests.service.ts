@@ -39,6 +39,7 @@ export class RequestsService {
           teamNumber: dto.teamNumber,
           gender: dto.gender,
           requestType: dto.requestType,
+          fixtureType: dto.fixtureType ?? null,
           priority: dto.priority ?? 0,
           status: RequestStatus.WAITING,
         });

@@ -44,6 +44,10 @@ export async function updateUserCapacity(id: string, capacity: number): Promise<
   return (await client.patch<UserDto>(`/users/${id}/capacity`, { capacity })).data;
 }
 
+export async function updateUserHall(id: string, hall: number): Promise<UserDto> {
+  return (await client.patch<UserDto>(`/users/${id}`, { hall })).data;
+}
+
 export async function deleteUser(id: string): Promise<void> {
   await client.delete(`/users/${id}`);
 }

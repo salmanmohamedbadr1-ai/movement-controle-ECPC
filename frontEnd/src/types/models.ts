@@ -1,4 +1,5 @@
 import type {
+  FixtureType,
   Gender,
   Hall,
   NotificationType,
@@ -29,6 +30,7 @@ export interface RequestDto {
   gender: Gender;
   volunteer: UserDto | null;
   requestType: RequestType;
+  fixtureType: FixtureType | null;
   status: RequestStatus;
   priority: number;
   assignedAt: string | null;

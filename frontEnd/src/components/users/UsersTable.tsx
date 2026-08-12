@@ -7,10 +7,13 @@ import type { UserDto } from '../../types/models';
 import { UserRole, VolunteerStatus } from '../../types/enums';
 import { timeAgo } from '../../utils/formatters';
 
+const HALL_NUMBERS = [1, 2, 3, 4];
+
 interface UsersTableProps {
   users: UserDto[];
   onStatusChange: (id: string, status: VolunteerStatus) => void;
   onCapacityChange: (id: string, capacity: number) => void;
+  onHallChange: (id: string, hall: number) => void;
   onDelete: (id: string) => void;
 }
 
@@ -18,6 +21,7 @@ export function UsersTable({
   users,
   onStatusChange,
   onCapacityChange,
+  onHallChange,
   onDelete,
 }: UsersTableProps) {
   const [capacityDrafts, setCapacityDrafts] = useState<Record<string, number>>({});
@@ -47,7 +51,20 @@ export function UsersTable({
                 <Badge color={u.role === UserRole.LEADER ? 'indigo' : 'blue'}>{u.role}</Badge>
               </td>
               <td className="px-4 py-3 text-slate-600">{u.gender}</td>
-              <td className="px-4 py-3 text-slate-600">{u.hall ?? '—'}</td>
+              <td className="px-4 py-3">
+                <Select
+                  className="w-auto py-1 text-xs"
+                  value={u.hall ?? ''}
+                  onChange={(e) => onHallChange(u.id, Number(e.target.value))}
+                >
+                  {u.hall == null && <option value="">—</option>}
+                  {HALL_NUMBERS.map((h) => (
+                    <option key={h} value={h}>
+                      Hall {h}
+                    </option>
+                  ))}
+                </Select>
+              </td>
               <td className="px-4 py-3">
                 <div className="flex items-center gap-2">
                   <VolunteerStatusBadge status={u.status} />

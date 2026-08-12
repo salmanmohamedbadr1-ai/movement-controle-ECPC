@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { FixtureType } from '../../../common/enums/fixture-type.enum';
 import { Gender } from '../../../common/enums/gender.enum';
 import { Hall } from '../../../common/enums/hall.enum';
 import { RequestStatus } from '../../../common/enums/request-status.enum';
@@ -24,6 +25,9 @@ export class RequestResponseDto {
 
   @ApiProperty({ enum: RequestType })
   requestType: RequestType;
+
+  @ApiProperty({ enum: FixtureType, nullable: true })
+  fixtureType: FixtureType | null;
 
   @ApiProperty({ enum: RequestStatus })
   status: RequestStatus;
@@ -55,6 +59,7 @@ export class RequestResponseDto {
       ? new UserResponseDto(request.volunteer)
       : null;
     this.requestType = request.requestType;
+    this.fixtureType = request.fixtureType;
     this.status = request.status;
     this.priority = request.priority;
     this.assignedAt = request.assignedAt;

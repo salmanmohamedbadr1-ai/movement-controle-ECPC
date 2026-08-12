@@ -24,6 +24,7 @@ export function LeaderUsersPage() {
   const fetch = useUsersStore((s) => s.fetch);
   const updateStatus = useUsersStore((s) => s.updateStatus);
   const updateCapacity = useUsersStore((s) => s.updateCapacity);
+  const updateHall = useUsersStore((s) => s.updateHall);
   const removeUser = useUsersStore((s) => s.remove);
   const lastCreatedBatch = useUsersStore((s) => s.lastCreatedBatch);
   const clearLastCreatedBatch = useUsersStore((s) => s.clearLastCreatedBatch);
@@ -64,6 +65,14 @@ export function LeaderUsersPage() {
       await updateCapacity(id, capacity);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Could not update capacity');
+    }
+  };
+
+  const handleHallChange = async (id: string, hall: number) => {
+    try {
+      await updateHall(id, hall);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not update hall');
     }
   };
 
@@ -178,6 +187,7 @@ export function LeaderUsersPage() {
           users={filtered}
           onStatusChange={(id, status) => void handleStatusChange(id, status)}
           onCapacityChange={(id, capacity) => void handleCapacityChange(id, capacity)}
+          onHallChange={(id, hall) => void handleHallChange(id, hall)}
           onDelete={(id) => {
             const user = filtered.find((u) => u.id === id);
             void handleDelete(id, user?.name ?? 'this user');

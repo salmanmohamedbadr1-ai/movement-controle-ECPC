@@ -1,6 +1,6 @@
 import { formatDistanceToNow } from 'date-fns';
 import { Hall } from '../types/enums';
-import type { Gender, RequestType } from '../types/enums';
+import type { FixtureType, Gender, RequestType } from '../types/enums';
 
 export function timeAgo(iso: string): string {
   return formatDistanceToNow(new Date(iso), { addSuffix: true });
@@ -19,6 +19,10 @@ export function formatRequestType(type: RequestType): string {
 
 export function formatGender(gender: Gender): string {
   return gender.charAt(0) + gender.slice(1).toLowerCase();
+}
+
+export function formatFixtureType(fixtureType: FixtureType): string {
+  return fixtureType.charAt(0) + fixtureType.slice(1).toLowerCase();
 }
 
 export function formatTeam(hall: Hall, teamNumber: number): string {

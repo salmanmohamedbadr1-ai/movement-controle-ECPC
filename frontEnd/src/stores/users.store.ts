@@ -14,6 +14,7 @@ interface UsersState {
   createBulk: (payload: BulkCreateUsersPayload) => Promise<UserDto[]>;
   updateStatus: (id: string, status: VolunteerStatus) => Promise<void>;
   updateCapacity: (id: string, capacity: number) => Promise<void>;
+  updateHall: (id: string, hall: number) => Promise<void>;
   remove: (id: string) => Promise<void>;
   patchOne: (user: UserDto) => void;
   clearLastCreatedBatch: () => void;
@@ -57,6 +58,11 @@ export const useUsersStore = create<UsersState>((set, get) => ({
 
   updateCapacity: async (id, capacity) => {
     const updated = await usersApi.updateUserCapacity(id, capacity);
+    get().patchOne(updated);
+  },
+
+  updateHall: async (id, hall) => {
+    const updated = await usersApi.updateUserHall(id, hall);
     get().patchOne(updated);
   },
 

@@ -4,8 +4,14 @@ import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { useRequestsStore } from '../stores/requests.store';
-import { Gender, RequestType } from '../types/enums';
-import { formatGender, formatHall, formatTeam, getHallFromTeamNumber } from '../utils/formatters';
+import { FixtureType, Gender, RequestType } from '../types/enums';
+import {
+  formatFixtureType,
+  formatGender,
+  formatHall,
+  formatTeam,
+  getHallFromTeamNumber,
+} from '../utils/formatters';
 
 const REQUEST_TYPE_OPTIONS: { type: RequestType; label: string; icon: string }[] = [
   { type: RequestType.BATHROOM, label: 'Bathroom', icon: '🚻' },
@@ -14,6 +20,7 @@ const REQUEST_TYPE_OPTIONS: { type: RequestType; label: string; icon: string }[]
 ];
 
 const GENDER_OPTIONS = Object.values(Gender);
+const FIXTURE_TYPE_OPTIONS = Object.values(FixtureType);
 
 export function HomePage() {
   const createRequest = useRequestsStore((s) => s.create);
@@ -21,6 +28,7 @@ export function HomePage() {
   const [teamNumber, setTeamNumber] = useState('');
   const [gender, setGender] = useState<Gender | null>(null);
   const [requestType, setRequestType] = useState<RequestType | null>(null);
+  const [fixtureType, setFixtureType] = useState<FixtureType | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const parsedTeamNumber = Number(teamNumber);
@@ -28,10 +36,12 @@ export function HomePage() {
     Number.isInteger(parsedTeamNumber) && parsedTeamNumber > 0
       ? getHallFromTeamNumber(parsedTeamNumber)
       : null;
+  const needsFixtureType = gender === Gender.MALE && requestType === RequestType.BATHROOM;
   const canSubmit =
     Boolean(derivedHall) &&
     Boolean(gender) &&
     Boolean(requestType) &&
+    (!needsFixtureType || Boolean(fixtureType)) &&
     Number.isInteger(parsedTeamNumber) &&
     parsedTeamNumber > 0 &&
     !submitting;
@@ -45,6 +55,7 @@ export function HomePage() {
         teamNumber: parsedTeamNumber,
         gender,
         requestType,
+        fixtureType: needsFixtureType && fixtureType ? fixtureType : undefined,
       });
       toast.success(
         `Request submitted — ${formatTeam(created.hall, created.teamNumber)}. A volunteer will come find you shortly.`,
@@ -52,6 +63,7 @@ export function HomePage() {
       setTeamNumber('');
       setGender(null);
       setRequestType(null);
+      setFixtureType(null);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Could not submit your request');
     } finally {
@@ -93,7 +105,10 @@ export function HomePage() {
               <button
                 key={g}
                 type="button"
-                onClick={() => setGender(g)}
+                onClick={() => {
+                  setGender(g);
+                  setFixtureType(null);
+                }}
                 className={`rounded-xl border px-3 py-3 text-sm font-medium transition-colors ${
                   gender === g
                     ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
@@ -113,7 +128,10 @@ export function HomePage() {
               <button
                 key={opt.type}
                 type="button"
-                onClick={() => setRequestType(opt.type)}
+                onClick={() => {
+                  setRequestType(opt.type);
+                  setFixtureType(null);
+                }}
                 className={`flex flex-col items-center gap-1 rounded-xl border px-3 py-3 text-sm font-medium transition-colors ${
                   requestType === opt.type
                     ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
@@ -126,6 +144,30 @@ export function HomePage() {
             ))}
           </div>
         </div>
+
+        {needsFixtureType && (
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-700">
+              Urinal or toilet?
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {FIXTURE_TYPE_OPTIONS.map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => setFixtureType(f)}
+                  className={`rounded-xl border px-3 py-3 text-sm font-medium transition-colors ${
+                    fixtureType === f
+                      ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                      : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                  }`}
+                >
+                  {formatFixtureType(f)}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <Button
           size="lg"

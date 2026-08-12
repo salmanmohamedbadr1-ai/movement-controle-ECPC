@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { AbstractEntity } from '../../../common/abstract/abstract.entity';
+import { FixtureType } from '../../../common/enums/fixture-type.enum';
 import { Gender } from '../../../common/enums/gender.enum';
 import { Hall } from '../../../common/enums/hall.enum';
 import { RequestStatus } from '../../../common/enums/request-status.enum';
@@ -25,6 +26,9 @@ export class Request extends AbstractEntity {
 
   @Column({ type: 'enum', enum: RequestType })
   requestType: RequestType;
+
+  @Column({ type: 'enum', enum: FixtureType, nullable: true })
+  fixtureType: FixtureType | null;
 
   @Column({
     type: 'enum',

@@ -22,6 +22,12 @@ export const RequestType = {
 } as const;
 export type RequestType = (typeof RequestType)[keyof typeof RequestType];
 
+export const FixtureType = {
+  URINAL: 'URINAL',
+  TOILET: 'TOILET',
+} as const;
+export type FixtureType = (typeof FixtureType)[keyof typeof FixtureType];
+
 export const RequestStatus = {
   WAITING: 'WAITING',
   ASSIGNED: 'ASSIGNED',

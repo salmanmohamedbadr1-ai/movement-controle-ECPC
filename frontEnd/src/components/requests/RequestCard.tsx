@@ -2,7 +2,13 @@ import type { ReactNode } from 'react';
 import { Card } from '../ui/Card';
 import { StatusBadge } from './StatusBadge';
 import type { RequestDto } from '../../types/models';
-import { formatGender, formatRequestType, formatTeam, timeAgo } from '../../utils/formatters';
+import {
+  formatFixtureType,
+  formatGender,
+  formatRequestType,
+  formatTeam,
+  timeAgo,
+} from '../../utils/formatters';
 
 export function RequestCard({
   request,
@@ -20,6 +26,7 @@ export function RequestCard({
           </p>
           <p className="text-sm text-slate-500">
             {formatRequestType(request.requestType)} · {formatGender(request.gender)}
+            {request.fixtureType ? ` · ${formatFixtureType(request.fixtureType)}` : ''}
           </p>
         </div>
         <StatusBadge status={request.status} />
