@@ -1,8 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { DataSource } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { AppModule } from '../app.module';
 import { Gender } from '../common/enums/gender.enum';
 import { UserRole } from '../common/enums/user-role.enum';
+import { User } from '../modules/users/entities/user.entity';
 import { UsersService } from '../modules/users/users.service';
 
 const VOLUNTEER_NAMES = [
@@ -29,15 +31,19 @@ async function seed(): Promise<void> {
     );
 
     const usersService = app.get(UsersService);
+    const usersRepository = app.get<Repository<User>>(getRepositoryToken(User));
 
     const codes: { role: string; name: string; code: string }[] = [];
 
-    const leader = await usersService.create({
-      name: 'Competition Leader',
-      role: UserRole.LEADER,
-      hall: 1,
-      gender: Gender.MALE,
-    });
+    const leader = await usersRepository.save(
+      usersRepository.create({
+        name: 'NizarEsmat',
+        code: '1234',
+        role: UserRole.LEADER,
+        hall: 1,
+        gender: Gender.MALE,
+      }),
+    );
     codes.push({ role: 'LEADER', name: leader.name, code: leader.code });
 
     for (let i = 0; i < VOLUNTEER_NAMES.length; i++) {
