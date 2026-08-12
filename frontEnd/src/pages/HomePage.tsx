@@ -32,18 +32,15 @@ export function HomePage() {
   const [submitting, setSubmitting] = useState(false);
 
   const parsedTeamNumber = Number(teamNumber);
-  const derivedHall =
-    Number.isInteger(parsedTeamNumber) && parsedTeamNumber > 0
-      ? getHallFromTeamNumber(parsedTeamNumber)
-      : null;
+  const isValidTeamNumber = /^\d{4}$/.test(teamNumber);
+  const derivedHall = isValidTeamNumber ? getHallFromTeamNumber(parsedTeamNumber) : null;
   const needsFixtureType = gender === Gender.MALE && requestType === RequestType.BATHROOM;
   const canSubmit =
     Boolean(derivedHall) &&
     Boolean(gender) &&
     Boolean(requestType) &&
     (!needsFixtureType || Boolean(fixtureType)) &&
-    Number.isInteger(parsedTeamNumber) &&
-    parsedTeamNumber > 0 &&
+    isValidTeamNumber &&
     !submitting;
 
   const handleSubmit = async () => {
@@ -94,7 +91,9 @@ export function HomePage() {
           <p className="mt-1 text-xs text-slate-500">
             {derivedHall
               ? `→ ${formatHall(derivedHall)}`
-              : 'Team number should start with your hall number (1-4), e.g. 2015 for Hall 1 & 2.'}
+              : teamNumber && !isValidTeamNumber
+                ? 'Team number must be 4 digits.'
+                : 'Team number should start with your hall number (1-4), e.g. 2015 for Hall 1 & 2.'}
           </p>
         </div>
 

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsInt, IsOptional, Min, ValidateIf } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, Max, Min, ValidateIf } from 'class-validator';
 import { FixtureType } from '../../../common/enums/fixture-type.enum';
 import { Gender } from '../../../common/enums/gender.enum';
 import { Hall } from '../../../common/enums/hall.enum';
@@ -10,9 +10,10 @@ export class CreateRequestDto {
   @IsEnum(Hall)
   hall: Hall;
 
-  @ApiProperty({ example: 12, minimum: 1 })
+  @ApiProperty({ example: 2015, minimum: 1000, maximum: 9999 })
   @IsInt()
-  @Min(1)
+  @Min(1000)
+  @Max(9999)
   teamNumber: number;
 
   @ApiProperty({ enum: Gender, example: Gender.MALE })

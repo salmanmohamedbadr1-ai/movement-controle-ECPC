@@ -32,6 +32,15 @@ export class RequestsService {
     dto: CreateRequestDto,
     creator?: AuthenticatedUser,
   ): Promise<RequestResponseDto> {
+    const existingWaiting = await this.requestsRepository.findOne({
+      where: { teamNumber: dto.teamNumber, status: RequestStatus.WAITING },
+    });
+    if (existingWaiting) {
+      throw new ConflictException(
+        `Team ${dto.teamNumber} already has a pending request.`,
+      );
+    }
+
     const requestId = await this.requestsRepository.manager.transaction(
       async (manager) => {
         const created = manager.create(Request, {
