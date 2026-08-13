@@ -11,12 +11,13 @@ import { BulkCreateUsersModal } from '../components/users/BulkCreateUsersModal';
 import { RevealCodesModal } from '../components/users/RevealCodesModal';
 import { useUsersStore } from '../stores/users.store';
 import { exportHallPdf } from '../api/users.api';
-import { UserRole } from '../types/enums';
-import type { VolunteerStatus } from '../types/enums';
+import { Gender, UserRole, VolunteerStatus } from '../types/enums';
 import { getHallNumberGroup, HALL_NUMBER_GROUP_OPTIONS } from '../utils/formatters';
 
 const HALL_FILTER_ALL = 'ALL';
 const ROLE_FILTER_ALL = 'ALL';
+const STATUS_FILTER_ALL = 'ALL';
+const GENDER_FILTER_ALL = 'ALL';
 
 export function LeaderUsersPage() {
   const users = useUsersStore((s) => s.users);
@@ -32,6 +33,8 @@ export function LeaderUsersPage() {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>(ROLE_FILTER_ALL);
   const [hallFilter, setHallFilter] = useState<string>(HALL_FILTER_ALL);
+  const [statusFilter, setStatusFilter] = useState<string>(STATUS_FILTER_ALL);
+  const [genderFilter, setGenderFilter] = useState<string>(GENDER_FILTER_ALL);
   const [modalOpen, setModalOpen] = useState(false);
   const [exportHall, setExportHall] = useState(1);
   const [exporting, setExporting] = useState(false);
@@ -50,9 +53,11 @@ export function LeaderUsersPage() {
       if (hallFilter !== HALL_FILTER_ALL && !getHallNumberGroup(Number(hallFilter)).includes(u.hall ?? -1)) {
         return false;
       }
+      if (statusFilter !== STATUS_FILTER_ALL && u.status !== statusFilter) return false;
+      if (genderFilter !== GENDER_FILTER_ALL && u.gender !== genderFilter) return false;
       return true;
     });
-  }, [users, search, roleFilter, hallFilter]);
+  }, [users, search, roleFilter, hallFilter, statusFilter, genderFilter]);
 
   const handleStatusChange = async (id: string, status: VolunteerStatus) => {
     try {
@@ -147,6 +152,31 @@ export function LeaderUsersPage() {
                   {opt.label}
                 </option>
               ))}
+            </Select>
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-medium text-slate-500">Status</label>
+            <Select
+              className="w-auto"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value={STATUS_FILTER_ALL}>All</option>
+              <option value={VolunteerStatus.AVAILABLE}>Available</option>
+              <option value={VolunteerStatus.BUSY}>Busy</option>
+              <option value={VolunteerStatus.OFFLINE}>Offline</option>
+            </Select>
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-medium text-slate-500">Gender</label>
+            <Select
+              className="w-auto"
+              value={genderFilter}
+              onChange={(e) => setGenderFilter(e.target.value)}
+            >
+              <option value={GENDER_FILTER_ALL}>All</option>
+              <option value={Gender.MALE}>Male</option>
+              <option value={Gender.FEMALE}>Female</option>
             </Select>
           </div>
           <span className="text-xs text-slate-400 sm:ml-auto">
