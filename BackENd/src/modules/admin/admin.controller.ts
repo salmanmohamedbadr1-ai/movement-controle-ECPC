@@ -24,7 +24,7 @@ export class AdminController {
   @Roles(UserRole.LEADER)
   @ApiOperation({
     summary:
-      'DANGER: wipes all notifications, request history, requests, and users (Leader only). Irreversible — matches the seed script scope exactly. Re-run the seed script afterward to restore working logins.',
+      'DANGER: wipes all notifications, request history, requests, and non-Leader users (Leader only). Irreversible. Leader accounts are preserved so they can keep logging in.',
   })
   async truncate(): Promise<null> {
     await this.adminService.truncateAll();
